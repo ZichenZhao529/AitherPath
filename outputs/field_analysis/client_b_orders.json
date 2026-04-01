@@ -1,0 +1,153 @@
+{
+  "dataset_name": "client_b",
+  "table_name": "orders",
+  "columns": [
+    {
+      "column_name": "no_pesanan",
+      "semantic_type": "order_id",
+      "confidence": "high",
+      "reason": "Sample values are structured identifiers (e.g., 'PSN240601') and 'pesanan' means order in Indonesian. Uniqueness pattern is consistent with an order identifier, allowing for repeated rows per order."
+    },
+    {
+      "column_name": "id_pelanggan",
+      "semantic_type": "customer_id",
+      "confidence": "high",
+      "reason": "Values like 'PLG-887' are customer-style identifiers, and 'pelanggan' means customer in Indonesian. Repetition across rows is also consistent with customers appearing in multiple orders."
+    },
+    {
+      "column_name": "tgl_pesan",
+      "semantic_type": "order_date",
+      "confidence": "high",
+      "reason": "Values are dates in day-month-year formats ('01-06-2024', '05/06/2024'), and 'tgl pesan' indicates order date in Indonesian."
+    },
+    {
+      "column_name": "total_harga",
+      "semantic_type": "amount",
+      "confidence": "high",
+      "reason": "Integer monetary-looking values such as 1850000 and 650000 represent transaction totals; 'total harga' means total price."
+    },
+    {
+      "column_name": "mata_uang",
+      "semantic_type": "currency",
+      "confidence": "high",
+      "reason": "All values are 'IDR', which is a standard currency code for Indonesian Rupiah. 'Mata uang' means currency."
+    },
+    {
+      "column_name": "status_pesanan",
+      "semantic_type": "order_status",
+      "confidence": "high",
+      "reason": "Values like 'terkirim', 'menunggu', and 'dibatalkan' are order lifecycle states (shipped, waiting, cancelled)."
+    },
+    {
+      "column_name": "alamat_kirim",
+      "semantic_type": "shipping_address",
+      "confidence": "high",
+      "reason": "Sample values are full street-style addresses with cities ('Jl. Sudirman 45, Jakarta'). 'Alamat kirim' means shipping address."
+    }
+  ],
+  "raw_profiles": [
+    {
+      "column_name": "no_pesanan",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "PSN240601",
+        "PSN240603",
+        "PSN240604",
+        "PSN240604"
+      ]
+    },
+    {
+      "column_name": "id_pelanggan",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "PLG-887",
+        "PLG-888",
+        "PLG-889",
+        "PLG-889"
+      ]
+    },
+    {
+      "column_name": "tgl_pesan",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "01-06-2024",
+        "03-06-2024",
+        "05/06/2024",
+        "05/06/2024"
+      ]
+    },
+    {
+      "column_name": "total_harga",
+      "dtype": "int64",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "1850000",
+        "650000",
+        "420000",
+        "420000"
+      ]
+    },
+    {
+      "column_name": "mata_uang",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 1,
+      "unique_ratio_non_null": 0.25,
+      "sample_values": [
+        "IDR",
+        "IDR",
+        "IDR",
+        "IDR"
+      ]
+    },
+    {
+      "column_name": "status_pesanan",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "terkirim",
+        "menunggu",
+        "dibatalkan",
+        "dibatalkan"
+      ]
+    },
+    {
+      "column_name": "alamat_kirim",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 2,
+      "null_rate": 0.5,
+      "n_unique_non_null": 2,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "Jl. Sudirman 45, Jakarta",
+        "Jl. Braga 12, Bandung"
+      ]
+    }
+  ]
+}

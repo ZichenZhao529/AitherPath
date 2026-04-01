@@ -1,0 +1,132 @@
+{
+  "dataset_name": "client_b",
+  "table_name": "customers",
+  "columns": [
+    {
+      "column_name": "id_pelanggan",
+      "semantic_type": "customer_id",
+      "confidence": "high",
+      "reason": "Values are unique customer-like identifiers with a stable prefix pattern (e.g. 'PLG-887'). 'Pelanggan' means customer, and the table is 'customers'."
+    },
+    {
+      "column_name": "nama",
+      "semantic_type": "full_name",
+      "confidence": "high",
+      "reason": "Sample values are person names with first and last components (e.g. 'Budi Santoso', 'Siti Rahma')."
+    },
+    {
+      "column_name": "no_hp",
+      "semantic_type": "phone",
+      "confidence": "high",
+      "reason": "Sample values match phone number formats, including Indonesian mobile prefixes such as '+62', '08', and '6281'."
+    },
+    {
+      "column_name": "email",
+      "semantic_type": "email",
+      "confidence": "high",
+      "reason": "Contains standard email-formatted values with '@' and domain names."
+    },
+    {
+      "column_name": "tgl_daftar",
+      "semantic_type": "registration_date",
+      "confidence": "high",
+      "reason": "Values are date-like strings and 'tgl_daftar' indicates signup/registration date. One invalid date ('31/02/2024') suggests string storage but does not change the semantic meaning."
+    },
+    {
+      "column_name": "kota",
+      "semantic_type": "city",
+      "confidence": "high",
+      "reason": "Sample values are city names in Indonesia such as Jakarta, Bandung, Surabaya, and Medan."
+    }
+  ],
+  "raw_profiles": [
+    {
+      "column_name": "id_pelanggan",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "PLG-887",
+        "PLG-888",
+        "PLG-889",
+        "PLG-890"
+      ]
+    },
+    {
+      "column_name": "nama",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "Budi Santoso",
+        "Siti Rahma",
+        "Andi Pratama",
+        "Dewi Lestari"
+      ]
+    },
+    {
+      "column_name": "no_hp",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 1,
+      "null_rate": 0.25,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "+62-812-3456",
+        "0813 7890 1122",
+        "628129999000"
+      ]
+    },
+    {
+      "column_name": "email",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 1,
+      "null_rate": 0.25,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "budi@tokopedia.com",
+        "siti.r@gmail.com",
+        "dewi@gmail.com"
+      ]
+    },
+    {
+      "column_name": "tgl_daftar",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "15/01/2024",
+        "22/03/2024",
+        "11-04-2024",
+        "31/02/2024"
+      ]
+    },
+    {
+      "column_name": "kota",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "Jakarta",
+        "Bandung",
+        "Surabaya",
+        "Medan"
+      ]
+    }
+  ]
+}

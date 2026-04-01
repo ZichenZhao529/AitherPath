@@ -1,0 +1,216 @@
+client_id: client_a
+
+source_tables:
+  - customers
+  - orders
+
+target_tables:
+  - unified_customers
+  - unified_orders
+
+mappings:
+  # -------------------------
+  # customers -> unified_customers
+  # -------------------------
+
+  - target_table: unified_customers
+    target_field: customer_id
+    source_table: customers
+    source_field: cust_id
+    transform_type: renaming
+    transformation_rule: "customer_id = cust_id"
+    example:
+      input: "C001"
+      output: "C001"
+
+  - target_table: unified_customers
+    target_field: full_name
+    source_table: customers
+    source_field: full_name
+    transform_type: direct_mapping
+    transformation_rule: "full_name = full_name"
+    example:
+      input: "John Smith"
+      output: "John Smith"
+
+  - target_table: unified_customers
+    target_field: first_name
+    source_table: customers
+    source_field: full_name
+    transform_type: splitting
+    transformation_rule: "first_name = split(full_name, ' ')[0]"
+    example:
+      input: "John Smith"
+      output: "John"
+    notes: "Only reliable for simple two-part names."
+
+  - target_table: unified_customers
+    target_field: last_name
+    source_table: customers
+    source_field: full_name
+    transform_type: splitting
+    transformation_rule: "last_name = split(full_name, ' ')[1]"
+    example:
+      input: "John Smith"
+      output: "Smith"
+    notes: "Only reliable for simple two-part names."
+
+  - target_table: unified_customers
+    target_field: email
+    source_table: customers
+    source_field: email_addr
+    transform_type: renaming
+    transformation_rule: "email = email_addr"
+    example:
+      input: "john@gmail.com"
+      output: "john@gmail.com"
+
+  - target_table: unified_customers
+    target_field: phone
+    source_table: customers
+    source_field: phone
+    transform_type: format_cleanup
+    transformation_rule: "phone = normalize_phone(phone)"
+    example:
+      input: "(646) 555-0199"
+      output: "6465550199"
+    notes: "Keep digits only or normalize to standard phone format."
+
+  - target_table: unified_customers
+    target_field: registration_date
+    source_table: customers
+    source_field: signup_dt
+    transform_type: date_format_conversion
+    transformation_rule: "registration_date = parse_date(signup_dt, 'YYYY-MM-DD')"
+    example:
+      input: "2024-03-22"
+      output: "2024-03-22"
+
+  - target_table: unified_customers
+    target_field: city
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "city = null"
+    example:
+      input: null
+      output: null
+    notes: "Client A customer table does not contain a city field."
+
+  - target_table: unified_customers
+    target_field: country
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "country = null"
+    example:
+      input: null
+      output: null
+    notes: "Client A customer table does not contain a country field."
+
+  - target_table: unified_customers
+    target_field: source_system
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_a'"
+    example:
+      input: null
+      output: "client_a"
+
+  # -------------------------
+  # orders -> unified_orders
+  # -------------------------
+
+  - target_table: unified_orders
+    target_field: order_id
+    source_table: orders
+    source_field: order_no
+    transform_type: renaming
+    transformation_rule: "order_id = order_no"
+    example:
+      input: "ORD-10001"
+      output: "ORD-10001"
+
+  - target_table: unified_orders
+    target_field: customer_id
+    source_table: orders
+    source_field: cust_id
+    transform_type: renaming
+    transformation_rule: "customer_id = cust_id"
+    example:
+      input: "C001"
+      output: "C001"
+
+  - target_table: unified_orders
+    target_field: order_date
+    source_table: orders
+    source_field: order_date
+    transform_type: date_format_conversion
+    transformation_rule: "order_date = parse_date(order_date, ['YYYY-MM-DD', 'YYYY/MM/DD'])"
+    example:
+      input: "2024-06-01"
+      output: "2024-06-01"
+    notes: "Should also handle malformed or inconsistent values such as '2024/13/01' with validation."
+
+  - target_table: unified_orders
+    target_field: amount
+    source_table: orders
+    source_field: total_amt
+    transform_type: renaming
+    transformation_rule: "amount = total_amt"
+    example:
+      input: 129.99
+      output: 129.99
+
+  - target_table: unified_orders
+    target_field: currency
+    source_table: orders
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "currency = 'USD'"
+    example:
+      input: null
+      output: "USD"
+    notes: "Client A does not explicitly provide currency; assume USD."
+
+  - target_table: unified_orders
+    target_field: amount_usd
+    source_table: orders
+    source_field: total_amt
+    transform_type: calculated_field
+    transformation_rule: "amount_usd = total_amt"
+    example:
+      input: 129.99
+      output: 129.99
+    notes: "Because Client A orders are assumed to already be in USD."
+
+  - target_table: unified_orders
+    target_field: order_status
+    source_table: orders
+    source_field: status
+    transform_type: direct_mapping
+    transformation_rule: "order_status = status"
+    example:
+      input: "delivered"
+      output: "delivered"
+
+  - target_table: unified_orders
+    target_field: shipping_address
+    source_table: orders
+    source_field: shipping_addr
+    transform_type: renaming
+    transformation_rule: "shipping_address = shipping_addr"
+    example:
+      input: "123 Main St, NYC"
+      output: "123 Main St, NYC"
+
+  - target_table: unified_orders
+    target_field: source_system
+    source_table: orders
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_a'"
+    example:
+      input: null
+      output: "client_a"

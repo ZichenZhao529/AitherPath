@@ -1,0 +1,49 @@
+{
+  "total_correct": 38,
+  "total_fields": 38,
+  "overall_accuracy": 1.0,
+  "per_file_results": [
+    {
+      "file_key": "client_a_customers",
+      "status": "evaluated",
+      "total": 5,
+      "correct": 5,
+      "errors": []
+    },
+    {
+      "file_key": "client_a_orders",
+      "status": "evaluated",
+      "total": 6,
+      "correct": 6,
+      "errors": []
+    },
+    {
+      "file_key": "client_b_customers",
+      "status": "evaluated",
+      "total": 6,
+      "correct": 6,
+      "errors": []
+    },
+    {
+      "file_key": "client_b_orders",
+      "status": "evaluated",
+      "total": 7,
+      "correct": 7,
+      "errors": []
+    },
+    {
+      "file_key": "client_c_customers",
+      "status": "evaluated",
+      "total": 7,
+      "correct": 7,
+      "errors": []
+    },
+    {
+      "file_key": "client_c_orders",
+      "status": "evaluated",
+      "total": 7,
+      "correct": 7,
+      "errors": []
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+client_id: client_b
+
+source_tables:
+  - customers
+  - orders
+
+target_tables:
+  - unified_customers
+  - unified_orders
+
+mappings:
+  # -------------------------
+  # customers -> unified_customers
+  # -------------------------
+
+  - target_table: unified_customers
+    target_field: customer_id
+    source_table: customers
+    source_field: id_pelanggan
+    transform_type: renaming
+    transformation_rule: "customer_id = id_pelanggan"
+    example:
+      input: "PLG-887"
+      output: "PLG-887"
+
+  - target_table: unified_customers
+    target_field: full_name
+    source_table: customers
+    source_field: nama
+    transform_type: renaming
+    transformation_rule: "full_name = nama"
+    example:
+      input: "Budi Santoso"
+      output: "Budi Santoso"
+
+  - target_table: unified_customers
+    target_field: first_name
+    source_table: customers
+    source_field: nama
+    transform_type: splitting
+    transformation_rule: "first_name = split(nama, ' ')[0]"
+    example:
+      input: "Budi Santoso"
+      output: "Budi"
+    notes: "Only reliable for simple two-part names."
+
+  - target_table: unified_customers
+    target_field: last_name
+    source_table: customers
+    source_field: nama
+    transform_type: splitting
+    transformation_rule: "last_name = split(nama, ' ')[1]"
+    example:
+      input: "Budi Santoso"
+      output: "Santoso"
+    notes: "May fail for multi-word names or missing surname."
+
+  - target_table: unified_customers
+    target_field: email
+    source_table: customers
+    source_field: email
+    transform_type: direct_mapping
+    transformation_rule: "email = email"
+    example:
+      input: "budi@tokopedia.com"
+      output: "budi@tokopedia.com"
+
+  - target_table: unified_customers
+    target_field: phone
+    source_table: customers
+    source_field: no_hp
+    transform_type: format_cleanup
+    transformation_rule: "phone = normalize_phone(no_hp)"
+    example:
+      input: "+62-812-3456"
+      output: "+628123456"
+    notes: "Normalize Indonesian mobile numbers and preserve country code when available."
+
+  - target_table: unified_customers
+    target_field: registration_date
+    source_table: customers
+    source_field: tgl_daftar
+    transform_type: date_format_conversion
+    transformation_rule: "registration_date = parse_date(tgl_daftar, ['DD/MM/YYYY', 'DD-MM-YYYY'])"
+    example:
+      input: "15/01/2024"
+      output: "2024-01-15"
+    notes: "Should validate malformed values such as '31/02/2024'."
+
+  - target_table: unified_customers
+    target_field: city
+    source_table: customers
+    source_field: kota
+    transform_type: renaming
+    transformation_rule: "city = kota"
+    example:
+      input: "Jakarta"
+      output: "Jakarta"
+
+  - target_table: unified_customers
+    target_field: country
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "country = null"
+    example:
+      input: null
+      output: null
+    notes: "Client B customer table does not explicitly contain country."
+
+  - target_table: unified_customers
+    target_field: source_system
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_b'"
+    example:
+      input: null
+      output: "client_b"
+
+  # -------------------------
+  # orders -> unified_orders
+  # -------------------------
+
+  - target_table: unified_orders
+    target_field: order_id
+    source_table: orders
+    source_field: no_pesanan
+    transform_type: renaming
+    transformation_rule: "order_id = no_pesanan"
+    example:
+      input: "PSN240601"
+      output: "PSN240601"
+
+  - target_table: unified_orders
+    target_field: customer_id
+    source_table: orders
+    source_field: id_pelanggan
+    transform_type: renaming
+    transformation_rule: "customer_id = id_pelanggan"
+    example:
+      input: "PLG-887"
+      output: "PLG-887"
+
+  - target_table: unified_orders
+    target_field: order_date
+    source_table: orders
+    source_field: tgl_pesan
+    transform_type: date_format_conversion
+    transformation_rule: "order_date = parse_date(tgl_pesan, ['DD-MM-YYYY', 'DD/MM/YYYY'])"
+    example:
+      input: "01-06-2024"
+      output: "2024-06-01"
+
+  - target_table: unified_orders
+    target_field: amount
+    source_table: orders
+    source_field: total_harga
+    transform_type: renaming
+    transformation_rule: "amount = total_harga"
+    example:
+      input: 1850000
+      output: 1850000
+
+  - target_table: unified_orders
+    target_field: currency
+    source_table: orders
+    source_field: mata_uang
+    transform_type: renaming
+    transformation_rule: "currency = mata_uang"
+    example:
+      input: "IDR"
+      output: "IDR"
+
+  - target_table: unified_orders
+    target_field: amount_usd
+    source_table: orders
+    source_field: [total_harga, mata_uang]
+    transform_type: calculated_field
+    transformation_rule: "amount_usd = convert_currency(total_harga, mata_uang, 'USD')"
+    example:
+      input:
+        total_harga: 1850000
+        mata_uang: "IDR"
+      output: 120.50
+    notes: "Example output depends on the exchange rate source."
+
+  - target_table: unified_orders
+    target_field: order_status
+    source_table: orders
+    source_field: status_pesanan
+    transform_type: value_translation
+    transformation_rule: |
+      if status_pesanan == "terkirim": order_status = "delivered"
+      elif status_pesanan == "menunggu": order_status = "pending"
+      elif status_pesanan == "dibatalkan": order_status = "cancelled"
+      else: order_status = "unknown"
+    example:
+      input: "terkirim"
+      output: "delivered"
+
+  - target_table: unified_orders
+    target_field: shipping_address
+    source_table: orders
+    source_field: alamat_kirim
+    transform_type: renaming
+    transformation_rule: "shipping_address = alamat_kirim"
+    example:
+      input: "Jl. Sudirman 45, Jakarta"
+      output: "Jl. Sudirman 45, Jakarta"
+
+  - target_table: unified_orders
+    target_field: source_system
+    source_table: orders
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_b'"
+    example:
+      input: null
+      output: "client_b"

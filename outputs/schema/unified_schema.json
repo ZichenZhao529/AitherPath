@@ -1,0 +1,158 @@
+{
+  "unified_customers": [
+    {
+      "field_name": "customer_id",
+      "data_type": "string",
+      "nullable": false,
+      "description": "Unified customer identifier.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present with high confidence in all customer datasets and required as the core customer-level key."
+    },
+    {
+      "field_name": "full_name",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer full name as a single displayable string.",
+      "source_coverage": "A, B, C (A and B directly provide full_name; C can derive it by combining first_name and last_name)",
+      "design_reason": "Keep a unified full_name for broadest cross-client compatibility. Client C has separate first_name and last_name, but A and B only provide full names, so full_name should be the canonical shared field."
+    },
+    {
+      "field_name": "first_name",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer given name.",
+      "source_coverage": "C only",
+      "design_reason": "Included explicitly because one source provides structured name components. It should remain nullable since A and B do not provide reliable first-name parsing from full_name."
+    },
+    {
+      "field_name": "last_name",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer family name or surname.",
+      "source_coverage": "C only",
+      "design_reason": "Included explicitly because one source provides structured surname data. It should remain nullable since A and B do not provide reliable last-name parsing from full_name."
+    },
+    {
+      "field_name": "email",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer email address.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Available across all customer datasets and valuable for customer identity resolution and communication."
+    },
+    {
+      "field_name": "phone",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer phone number in source-provided format.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Available across all customer datasets, but stored as string to preserve international formatting and source variability."
+    },
+    {
+      "field_name": "registration_date",
+      "data_type": "date",
+      "nullable": true,
+      "description": "Date the customer registered or signed up.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present in all customer datasets. Use date as the target type, with parsing/quality handling because some source values are malformed or inconsistently formatted."
+    },
+    {
+      "field_name": "city",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer city.",
+      "source_coverage": "B only",
+      "design_reason": "Include city because geography is useful at customer level and one client provides it explicitly. Nullable because A and C do not contain a customer-city field."
+    },
+    {
+      "field_name": "country",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Customer country, preferably as a standard country code when available.",
+      "source_coverage": "C only",
+      "design_reason": "Include country because geography should support both city and country where available. Nullable because A and B do not contain a customer-country field."
+    },
+    {
+      "field_name": "source_system",
+      "data_type": "string",
+      "nullable": false,
+      "description": "Identifier of the originating client dataset for the customer record.",
+      "source_coverage": "A, B, C (derived from dataset context)",
+      "design_reason": "Needed for lineage, troubleshooting, and preserving source provenance across integrated customer records."
+    }
+  ],
+  "unified_orders": [
+    {
+      "field_name": "order_id",
+      "data_type": "string",
+      "nullable": false,
+      "description": "Unified order identifier.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present with high confidence in all order datasets and required as the core order-level key."
+    },
+    {
+      "field_name": "customer_id",
+      "data_type": "string",
+      "nullable": false,
+      "description": "Identifier of the customer associated with the order.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present in all order datasets and required to relate orders to unified_customers."
+    },
+    {
+      "field_name": "order_date",
+      "data_type": "date",
+      "nullable": true,
+      "description": "Date the order was placed.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present in all order datasets. Use date as the target type, with validation and parsing rules because some source values are malformed or use different date formats."
+    },
+    {
+      "field_name": "amount",
+      "data_type": "decimal(18,2)",
+      "nullable": true,
+      "description": "Original order monetary amount in the source currency.",
+      "source_coverage": "A, B, C",
+      "design_reason": "All sources provide an order total. Preserve the original numeric value as the canonical source amount."
+    },
+    {
+      "field_name": "currency",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Original currency code for the order amount.",
+      "source_coverage": "B, C directly; A not explicitly provided",
+      "design_reason": "Monetary values should preserve original currency. Even though client A lacks an explicit currency field, the unified schema should retain currency to support multi-currency processing."
+    },
+    {
+      "field_name": "amount_usd",
+      "data_type": "decimal(18,2)",
+      "nullable": true,
+      "description": "Order amount normalized to USD using an agreed exchange-rate process.",
+      "source_coverage": "None directly; derived for A, B, C when currency and exchange rates are available",
+      "design_reason": "Include a normalized USD amount in addition to original amount and currency to enable cross-client analytics. It is nullable because it must be derived and may be unavailable when source currency or conversion rates are missing."
+    },
+    {
+      "field_name": "order_status",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Order lifecycle status in source or mapped standardized form.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present in all order datasets and useful for operational and analytical reporting, though multilingual values may require mapping to a controlled vocabulary."
+    },
+    {
+      "field_name": "shipping_address",
+      "data_type": "string",
+      "nullable": true,
+      "description": "Shipping or delivery address associated with the order.",
+      "source_coverage": "A, B, C",
+      "design_reason": "Present in all order datasets and correctly belongs at the order level because shipment destinations can vary across orders for the same customer."
+    },
+    {
+      "field_name": "source_system",
+      "data_type": "string",
+      "nullable": false,
+      "description": "Identifier of the originating client dataset for the order record.",
+      "source_coverage": "A, B, C (derived from dataset context)",
+      "design_reason": "Needed for lineage, traceability, and handling source-specific transformations in the integrated orders table."
+    }
+  ]
+}

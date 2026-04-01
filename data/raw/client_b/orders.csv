@@ -1,0 +1,5 @@
+no_pesanan,id_pelanggan,tgl_pesan,total_harga,mata_uang,status_pesanan,alamat_kirim
+PSN240601,PLG-887,01-06-2024,1850000,IDR,terkirim,"Jl. Sudirman 45, Jakarta"
+PSN240603,PLG-888,03-06-2024,650000,IDR,menunggu,"Jl. Braga 12, Bandung"
+PSN240604,PLG-889,05/06/2024,420000,IDR,dibatalkan,N/A
+PSN240604,PLG-889,05/06/2024,420000,IDR,dibatalkan,N/A

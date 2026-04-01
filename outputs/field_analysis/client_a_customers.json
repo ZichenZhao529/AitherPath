@@ -1,0 +1,114 @@
+{
+  "dataset_name": "client_a",
+  "table_name": "customers",
+  "columns": [
+    {
+      "column_name": "cust_id",
+      "semantic_type": "customer_id",
+      "confidence": "high",
+      "reason": "Values are identifier-like strings such as 'C001' and 'C004', with high uniqueness and a customer-oriented column name."
+    },
+    {
+      "column_name": "full_name",
+      "semantic_type": "full_name",
+      "confidence": "high",
+      "reason": "Sample values are person names with first and last components, e.g. 'John Smith' and 'Emma Davis'."
+    },
+    {
+      "column_name": "email_addr",
+      "semantic_type": "email",
+      "confidence": "high",
+      "reason": "Sample values match email address patterns such as 'john@gmail.com' and 'mary.j@yahoo.com'."
+    },
+    {
+      "column_name": "signup_dt",
+      "semantic_type": "registration_date",
+      "confidence": "high",
+      "reason": "Values are date-like strings in YYYY-MM-DD format, and the name suggests customer signup/registration timing."
+    },
+    {
+      "column_name": "phone",
+      "semantic_type": "phone",
+      "confidence": "high",
+      "reason": "Sample values are phone-number formatted strings such as '212-555-0101' and '(646) 555-0199'."
+    }
+  ],
+  "raw_profiles": [
+    {
+      "column_name": "cust_id",
+      "dtype": "str",
+      "row_count": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 0.8,
+      "sample_values": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C004"
+      ]
+    },
+    {
+      "column_name": "full_name",
+      "dtype": "str",
+      "row_count": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 0.8,
+      "sample_values": [
+        "John Smith",
+        "Mary Jane",
+        "Alex Brown",
+        "Emma Davis",
+        "Emma Davis"
+      ]
+    },
+    {
+      "column_name": "email_addr",
+      "dtype": "str",
+      "row_count": 5,
+      "null_count": 2,
+      "null_rate": 0.4,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "john@gmail.com",
+        "mary.j@yahoo.com",
+        "alex.b@gmail.com"
+      ]
+    },
+    {
+      "column_name": "signup_dt",
+      "dtype": "str",
+      "row_count": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 0.8,
+      "sample_values": [
+        "2024-01-15",
+        "2024-03-22",
+        "2024-04-10",
+        "2024-05-01",
+        "2024-05-01"
+      ]
+    },
+    {
+      "column_name": "phone",
+      "dtype": "str",
+      "row_count": 5,
+      "null_count": 2,
+      "null_rate": 0.4,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "212-555-0101",
+        "(646) 555-0199",
+        "917 555 0110"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+client_id: client_c
+
+source_tables:
+  - customers
+  - orders
+
+target_tables:
+  - unified_customers
+  - unified_orders
+
+mappings:
+  # -------------------------
+  # customers -> unified_customers
+  # -------------------------
+
+  - target_table: unified_customers
+    target_field: customer_id
+    source_table: customers
+    source_field: Kundennummer
+    transform_type: renaming
+    transformation_rule: "customer_id = Kundennummer"
+    example:
+      input: "KD-20001"
+      output: "KD-20001"
+
+  - target_table: unified_customers
+    target_field: first_name
+    source_table: customers
+    source_field: Vorname
+    transform_type: renaming
+    transformation_rule: "first_name = Vorname"
+    example:
+      input: "Hans"
+      output: "Hans"
+
+  - target_table: unified_customers
+    target_field: last_name
+    source_table: customers
+    source_field: Nachname
+    transform_type: renaming
+    transformation_rule: "last_name = Nachname"
+    example:
+      input: "Müller"
+      output: "Müller"
+
+  - target_table: unified_customers
+    target_field: full_name
+    source_table: customers
+    source_field: [Vorname, Nachname]
+    transform_type: concatenation
+    transformation_rule: "full_name = Vorname + ' ' + Nachname"
+    example:
+      input:
+        Vorname: "Hans"
+        Nachname: "Müller"
+      output: "Hans Müller"
+
+  - target_table: unified_customers
+    target_field: email
+    source_table: customers
+    source_field: E-Mail
+    transform_type: renaming
+    transformation_rule: "email = E-Mail"
+    example:
+      input: "hans.m@web.de"
+      output: "hans.m@web.de"
+
+  - target_table: unified_customers
+    target_field: phone
+    source_table: customers
+    source_field: Telefon
+    transform_type: format_cleanup
+    transformation_rule: "phone = normalize_phone(Telefon)"
+    example:
+      input: "+49-30-12345"
+      output: "+493012345"
+
+  - target_table: unified_customers
+    target_field: registration_date
+    source_table: customers
+    source_field: Registrierungsdatum
+    transform_type: date_format_conversion
+    transformation_rule: "registration_date = parse_date(Registrierungsdatum, ['YYYY.MM.DD', 'DD.MM.YYYY'])"
+    example:
+      input: "2024.01.15"
+      output: "2024-01-15"
+
+  - target_table: unified_customers
+    target_field: city
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "city = null"
+    example:
+      input: null
+      output: null
+    notes: "Client C customer table does not explicitly contain city."
+
+  - target_table: unified_customers
+    target_field: country
+    source_table: customers
+    source_field: Land
+    transform_type: renaming
+    transformation_rule: "country = Land"
+    example:
+      input: "DE"
+      output: "DE"
+
+  - target_table: unified_customers
+    target_field: source_system
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_c'"
+    example:
+      input: null
+      output: "client_c"
+
+  # -------------------------
+  # orders -> unified_orders
+  # -------------------------
+
+  - target_table: unified_orders
+    target_field: order_id
+    source_table: orders
+    source_field: Bestellnummer
+    transform_type: renaming
+    transformation_rule: "order_id = Bestellnummer"
+    example:
+      input: "B-2024-0601"
+      output: "B-2024-0601"
+
+  - target_table: unified_orders
+    target_field: customer_id
+    source_table: orders
+    source_field: Kundennummer
+    transform_type: renaming
+    transformation_rule: "customer_id = Kundennummer"
+    example:
+      input: "KD-20001"
+      output: "KD-20001"
+
+  - target_table: unified_orders
+    target_field: order_date
+    source_table: orders
+    source_field: Bestelldatum
+    transform_type: date_format_conversion
+    transformation_rule: "order_date = parse_date(Bestelldatum, ['DD.MM.YYYY', 'YYYY.MM.DD'])"
+    example:
+      input: "15.01.2024"
+      output: "2024-01-15"
+    notes: "Should validate malformed values such as '31.13.2024'."
+
+  - target_table: unified_orders
+    target_field: amount
+    source_table: orders
+    source_field: Gesamtbetrag
+    transform_type: renaming
+    transformation_rule: "amount = Gesamtbetrag"
+    example:
+      input: 109.99
+      output: 109.99
+
+  - target_table: unified_orders
+    target_field: currency
+    source_table: orders
+    source_field: Währung
+    transform_type: renaming
+    transformation_rule: "currency = Währung"
+    example:
+      input: "EUR"
+      output: "EUR"
+
+  - target_table: unified_orders
+    target_field: amount_usd
+    source_table: orders
+    source_field: [Gesamtbetrag, Währung]
+    transform_type: calculated_field
+    transformation_rule: "amount_usd = convert_currency(Gesamtbetrag, Währung, 'USD')"
+    example:
+      input:
+        Gesamtbetrag: 109.99
+        Währung: "EUR"
+      output: 118.40
+    notes: "Example output depends on the exchange rate source."
+
+  - target_table: unified_orders
+    target_field: order_status
+    source_table: orders
+    source_field: Bestellstatus
+    transform_type: value_translation
+    transformation_rule: |
+      if Bestellstatus == "Geliefert": order_status = "delivered"
+      elif Bestellstatus == "Ausstehend": order_status = "pending"
+      elif Bestellstatus == "Storniert": order_status = "cancelled"
+      else: order_status = "unknown"
+    example:
+      input: "Geliefert"
+      output: "delivered"
+
+  - target_table: unified_orders
+    target_field: shipping_address
+    source_table: orders
+    source_field: Lieferadresse
+    transform_type: renaming
+    transformation_rule: "shipping_address = Lieferadresse"
+    example:
+      input: "Berliner Str. 7, Berlin"
+      output: "Berliner Str. 7, Berlin"
+
+  - target_table: unified_orders
+    target_field: source_system
+    source_table: orders
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_c'"
+    example:
+      input: null
+      output: "client_c"

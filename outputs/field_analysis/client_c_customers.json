@@ -1,0 +1,153 @@
+{
+  "dataset_name": "client_c",
+  "table_name": "customers",
+  "columns": [
+    {
+      "column_name": "Kundennummer",
+      "semantic_type": "customer_id",
+      "confidence": "high",
+      "reason": "German term for customer number, and sample values are identifier-like codes (e.g. 'KD-20001') with high uniqueness consistent with customer IDs."
+    },
+    {
+      "column_name": "Vorname",
+      "semantic_type": "first_name",
+      "confidence": "high",
+      "reason": "German term for first name, and sample values are given names such as 'Hans', 'Sophie', and 'Lukas'."
+    },
+    {
+      "column_name": "Nachname",
+      "semantic_type": "last_name",
+      "confidence": "high",
+      "reason": "German term for last name, and sample values are family names such as 'Müller', 'Dubois', and 'Weber'."
+    },
+    {
+      "column_name": "E-Mail",
+      "semantic_type": "email",
+      "confidence": "high",
+      "reason": "Sample values contain standard email address patterns like 'hans.m@web.de' and 'sophie@orange.fr'."
+    },
+    {
+      "column_name": "Telefon",
+      "semantic_type": "phone",
+      "confidence": "high",
+      "reason": "German term for telephone, and sample values are phone-number-like strings with international prefixes such as '+49-30-12345'."
+    },
+    {
+      "column_name": "Registrierungsdatum",
+      "semantic_type": "registration_date",
+      "confidence": "high",
+      "reason": "German term for registration date, and sample values are date-like strings such as '2024.01.15' and '2024.03.22'."
+    },
+    {
+      "column_name": "Land",
+      "semantic_type": "country",
+      "confidence": "high",
+      "reason": "German term for country, and sample values are country codes like 'DE' and 'FR'."
+    }
+  ],
+  "raw_profiles": [
+    {
+      "column_name": "Kundennummer",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "KD-20001",
+        "KD-20002",
+        "KD-20003",
+        "KD-20003"
+      ]
+    },
+    {
+      "column_name": "Vorname",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "Hans",
+        "Sophie",
+        "Lukas",
+        "Lukas"
+      ]
+    },
+    {
+      "column_name": "Nachname",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "Müller",
+        "Dubois",
+        "Weber",
+        "Weber"
+      ]
+    },
+    {
+      "column_name": "E-Mail",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "hans.m@web.de",
+        "sophie@orange.fr",
+        "lukas@web.de",
+        "lukas@web.de"
+      ]
+    },
+    {
+      "column_name": "Telefon",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 2,
+      "null_rate": 0.5,
+      "n_unique_non_null": 2,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "+49-30-12345",
+        "+33-1-23456"
+      ]
+    },
+    {
+      "column_name": "Registrierungsdatum",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "2024.01.15",
+        "2024.03.22",
+        "2024.04.10",
+        "2024.04.10"
+      ]
+    },
+    {
+      "column_name": "Land",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 2,
+      "unique_ratio_non_null": 0.5,
+      "sample_values": [
+        "DE",
+        "FR",
+        "DE",
+        "DE"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+cust_id,full_name,email_addr,signup_dt,phone
+C001,John Smith,john@gmail.com,2024-01-15,212-555-0101
+C002,Mary Jane,mary.j@yahoo.com,2024-03-22,(646) 555-0199
+C003,Alex Brown,alex.b@gmail.com,2024-04-10,917 555 0110
+C004,Emma Davis,N/A,2024-05-01,
+C004,Emma Davis,N/A,2024-05-01,

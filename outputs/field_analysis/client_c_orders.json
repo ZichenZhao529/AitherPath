@@ -1,0 +1,147 @@
+{
+  "dataset_name": "client_c",
+  "table_name": "orders",
+  "columns": [
+    {
+      "column_name": "Bestellnummer",
+      "semantic_type": "order_id",
+      "confidence": "high",
+      "reason": "German column name suggests order number, and sample values are unique order-like identifiers with a consistent prefix-pattern."
+    },
+    {
+      "column_name": "Kundennummer",
+      "semantic_type": "customer_id",
+      "confidence": "high",
+      "reason": "German column name suggests customer number, and sample values are unique customer-like identifiers with a consistent prefix-pattern."
+    },
+    {
+      "column_name": "Bestelldatum",
+      "semantic_type": "order_date",
+      "confidence": "medium",
+      "reason": "German column name suggests order date, and sample values mostly follow a date-like dd.mm.yyyy format, though one sample appears invalid (31.13.2024)."
+    },
+    {
+      "column_name": "Gesamtbetrag",
+      "semantic_type": "amount",
+      "confidence": "high",
+      "reason": "Numeric decimal values paired with a separate currency column strongly indicate a monetary amount."
+    },
+    {
+      "column_name": "Währung",
+      "semantic_type": "currency",
+      "confidence": "high",
+      "reason": "German column name means currency, and all sample values are ISO-style currency codes (EUR)."
+    },
+    {
+      "column_name": "Bestellstatus",
+      "semantic_type": "order_status",
+      "confidence": "high",
+      "reason": "German status-like values such as delivered, pending, and canceled indicate order lifecycle states."
+    },
+    {
+      "column_name": "Lieferadresse",
+      "semantic_type": "shipping_address",
+      "confidence": "high",
+      "reason": "German column name suggests delivery address, and sample values are full street-and-city address strings."
+    }
+  ],
+  "raw_profiles": [
+    {
+      "column_name": "Bestellnummer",
+      "dtype": "str",
+      "row_count": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "B-2024-0601",
+        "B-2024-0603",
+        "B-2024-0604"
+      ]
+    },
+    {
+      "column_name": "Kundennummer",
+      "dtype": "str",
+      "row_count": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "KD-20001",
+        "KD-20002",
+        "KD-20003"
+      ]
+    },
+    {
+      "column_name": "Bestelldatum",
+      "dtype": "str",
+      "row_count": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "15.01.2024",
+        "22.03.2024",
+        "31.13.2024"
+      ]
+    },
+    {
+      "column_name": "Gesamtbetrag",
+      "dtype": "float64",
+      "row_count": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "109.99",
+        "38.5",
+        "58.0"
+      ]
+    },
+    {
+      "column_name": "Währung",
+      "dtype": "str",
+      "row_count": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 1,
+      "unique_ratio_non_null": 0.3333,
+      "sample_values": [
+        "EUR",
+        "EUR",
+        "EUR"
+      ]
+    },
+    {
+      "column_name": "Bestellstatus",
+      "dtype": "str",
+      "row_count": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "Geliefert",
+        "Ausstehend",
+        "Storniert"
+      ]
+    },
+    {
+      "column_name": "Lieferadresse",
+      "dtype": "str",
+      "row_count": 3,
+      "null_count": 1,
+      "null_rate": 0.3333,
+      "n_unique_non_null": 2,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "Berliner Str. 7, Berlin",
+        "15 Rue de Rivoli, Paris"
+      ]
+    }
+  ]
+}

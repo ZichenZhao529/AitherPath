@@ -1,0 +1,133 @@
+{
+  "dataset_name": "client_a",
+  "table_name": "orders",
+  "columns": [
+    {
+      "column_name": "order_no",
+      "semantic_type": "order_id",
+      "confidence": "high",
+      "reason": "Values are unique per row and follow an order identifier pattern like 'ORD-10001'. In an orders table, this strongly indicates an order ID."
+    },
+    {
+      "column_name": "cust_id",
+      "semantic_type": "customer_id",
+      "confidence": "high",
+      "reason": "Values are short unique customer-like codes such as 'C001' and 'C002', which fit a customer identifier pattern."
+    },
+    {
+      "column_name": "order_date",
+      "semantic_type": "order_date",
+      "confidence": "medium",
+      "reason": "Most sample values are date-like and align with an order event date, though one sample ('2024/13/01') appears malformed, reducing confidence."
+    },
+    {
+      "column_name": "total_amt",
+      "semantic_type": "amount",
+      "confidence": "high",
+      "reason": "Numeric decimal values such as 129.99 and 45.5 are consistent with monetary totals for orders."
+    },
+    {
+      "column_name": "status",
+      "semantic_type": "order_status",
+      "confidence": "high",
+      "reason": "Sample values 'delivered', 'pending', and 'cancelled' are standard order lifecycle statuses."
+    },
+    {
+      "column_name": "shipping_addr",
+      "semantic_type": "shipping_address",
+      "confidence": "high",
+      "reason": "Sample values are street-style address strings with city information, matching a shipping address field."
+    }
+  ],
+  "raw_profiles": [
+    {
+      "column_name": "order_no",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "ORD-10001",
+        "ORD-10002",
+        "ORD-10003",
+        "ORD-10004"
+      ]
+    },
+    {
+      "column_name": "cust_id",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "C001",
+        "C002",
+        "C003",
+        "C004"
+      ]
+    },
+    {
+      "column_name": "order_date",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "2024-06-01",
+        "2024-06-03",
+        "2024-06-05",
+        "2024/13/01"
+      ]
+    },
+    {
+      "column_name": "total_amt",
+      "dtype": "float64",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 4,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "129.99",
+        "45.5",
+        "79.99",
+        "22.0"
+      ]
+    },
+    {
+      "column_name": "status",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 0.75,
+      "sample_values": [
+        "delivered",
+        "pending",
+        "cancelled",
+        "pending"
+      ]
+    },
+    {
+      "column_name": "shipping_addr",
+      "dtype": "str",
+      "row_count": 4,
+      "null_count": 1,
+      "null_rate": 0.25,
+      "n_unique_non_null": 3,
+      "unique_ratio_non_null": 1.0,
+      "sample_values": [
+        "123 Main St, NYC",
+        "456 Oak Ave, LA",
+        "88 Pine Rd, Boston"
+      ]
+    }
+  ]
+}

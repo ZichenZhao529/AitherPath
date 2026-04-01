@@ -1,0 +1,212 @@
+client_id: client_b
+
+source_tables:
+  - customers
+  - orders
+
+target_tables:
+  - unified_customers
+  - unified_orders
+
+mappings:
+  - target_table: unified_customers
+    target_field: customer_id
+    source_table: customers
+    source_field: id_pelanggan
+    transform_type: renaming
+    transformation_rule: "customer_id = id_pelanggan"
+    example:
+      input: "PLG-887"
+      output: "PLG-887"
+
+  - target_table: unified_customers
+    target_field: full_name
+    source_table: customers
+    source_field: nama
+    transform_type: renaming
+    transformation_rule: "full_name = nama"
+    example:
+      input: "Budi Santoso"
+      output: "Budi Santoso"
+
+  - target_table: unified_customers
+    target_field: first_name
+    source_table: customers
+    source_field: nama
+    transform_type: splitting
+    transformation_rule: "Split nama by spaces; first_name = first token. If nama contains only one token, assign that token to first_name and set last_name to empty/null."
+    example:
+      input: "Budi Santoso"
+      output: "Budi"
+    notes: "Per client_b rule, do not leave first_name null when a simple split from nama is possible."
+
+  - target_table: unified_customers
+    target_field: last_name
+    source_table: customers
+    source_field: nama
+    transform_type: splitting
+    transformation_rule: "Split nama by spaces; last_name = all tokens after the first joined by a single space. If nama contains only one token, set last_name to empty/null."
+    example:
+      input: "Budi Santoso"
+      output: "Santoso"
+    notes: "Assumes simple space-based parsing. Multi-part surnames remain in last_name as joined remainder."
+
+  - target_table: unified_customers
+    target_field: email
+    source_table: customers
+    source_field: email
+    transform_type: direct_mapping
+    transformation_rule: "email = email"
+    example:
+      input: "budi@tokopedia.com"
+      output: "budi@tokopedia.com"
+
+  - target_table: unified_customers
+    target_field: phone
+    source_table: customers
+    source_field: no_hp
+    transform_type: direct_mapping
+    transformation_rule: "phone = no_hp"
+    example:
+      input: "+62-812-3456"
+      output: "+62-812-3456"
+    notes: "Target schema specifies keeping customer phone in source-provided format."
+
+  - target_table: unified_customers
+    target_field: registration_date
+    source_table: customers
+    source_field: tgl_daftar
+    transform_type: date_format_conversion
+    transformation_rule: "Parse tgl_daftar using source formats 'DD/MM/YYYY' or 'DD-MM-YYYY'; convert to target format 'YYYY-MM-DD'. If parsing fails or date is invalid (e.g. 31/02/2024), set registration_date to null and flag for data quality review."
+    example:
+      input: "15/01/2024"
+      output: "2024-01-15"
+    notes: "Handles mixed delimiter formats observed in source data."
+
+  - target_table: unified_customers
+    target_field: city
+    source_table: customers
+    source_field: kota
+    transform_type: renaming
+    transformation_rule: "city = kota"
+    example:
+      input: "Jakarta"
+      output: "Jakarta"
+
+  - target_table: unified_customers
+    target_field: country
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "country = null"
+    example:
+      input: null
+      output: null
+    notes: "Client B customer source does not contain a country field."
+
+  - target_table: unified_customers
+    target_field: source_system
+    source_table: customers
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_b'"
+    example:
+      input: null
+      output: "client_b"
+
+  - target_table: unified_orders
+    target_field: order_id
+    source_table: orders
+    source_field: no_pesanan
+    transform_type: renaming
+    transformation_rule: "order_id = no_pesanan"
+    example:
+      input: "PSN240601"
+      output: "PSN240601"
+
+  - target_table: unified_orders
+    target_field: customer_id
+    source_table: orders
+    source_field: id_pelanggan
+    transform_type: renaming
+    transformation_rule: "customer_id = id_pelanggan"
+    example:
+      input: "PLG-887"
+      output: "PLG-887"
+
+  - target_table: unified_orders
+    target_field: order_date
+    source_table: orders
+    source_field: tgl_pesan
+    transform_type: date_format_conversion
+    transformation_rule: "Parse tgl_pesan using source formats 'DD-MM-YYYY' or 'DD/MM/YYYY'; convert to target format 'YYYY-MM-DD'. If parsing fails, set order_date to null."
+    example:
+      input: "05/06/2024"
+      output: "2024-06-05"
+    notes: "Handles mixed date separators observed in source order data."
+
+  - target_table: unified_orders
+    target_field: amount
+    source_table: orders
+    source_field: total_harga
+    transform_type: renaming
+    transformation_rule: "amount = cast(total_harga as decimal(18,2))"
+    example:
+      input: "1850000"
+      output: "1850000.00"
+
+  - target_table: unified_orders
+    target_field: currency
+    source_table: orders
+    source_field: mata_uang
+    transform_type: renaming
+    transformation_rule: "currency = mata_uang"
+    example:
+      input: "IDR"
+      output: "IDR"
+
+  - target_table: unified_orders
+    target_field: amount_usd
+    source_table: orders
+    source_field: total_harga
+    transform_type: calculated_field
+    transformation_rule: "amount_usd = if mata_uang = 'USD' then cast(total_harga as decimal(18,2)) else if exchange_rate_to_usd exists for mata_uang and order_date then round(total_harga * exchange_rate_to_usd, 2) else null. Pseudocode: rate = lookup_fx_rate(mata_uang, order_date, 'USD'); if rate is not null then amount_usd = round(total_harga * rate, 2) else amount_usd = null."
+    example:
+      input:
+        total_harga: 1850000
+        mata_uang: "IDR"
+        order_date: "2024-06-01"
+        exchange_rate_to_usd: 0.000062
+      output: "114.70"
+    notes: "Derived field; requires FX rate reference data keyed by source currency and order date."
+
+  - target_table: unified_orders
+    target_field: order_status
+    source_table: orders
+    source_field: status_pesanan
+    transform_type: value_translation
+    transformation_rule: "Translate status_pesanan to standardized vocabulary: 'terkirim' -> 'delivered', 'menunggu' -> 'pending', 'dibatalkan' -> 'cancelled'. If an unmapped value appears, preserve original value or route to review according to pipeline policy."
+    example:
+      input: "terkirim"
+      output: "delivered"
+    notes: "Uses project-standard vocabulary; use 'cancelled' rather than 'canceled'."
+
+  - target_table: unified_orders
+    target_field: shipping_address
+    source_table: orders
+    source_field: alamat_kirim
+    transform_type: renaming
+    transformation_rule: "shipping_address = alamat_kirim"
+    example:
+      input: "Jl. Sudirman 45, Jakarta"
+      output: "Jl. Sudirman 45, Jakarta"
+
+  - target_table: unified_orders
+    target_field: source_system
+    source_table: orders
+    source_field: null
+    transform_type: default_value
+    transformation_rule: "source_system = 'client_b'"
+    example:
+      input: null
+      output: "client_b"
