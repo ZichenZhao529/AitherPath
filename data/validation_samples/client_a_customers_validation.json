@@ -1,0 +1,77 @@
+[
+  {
+    "sample_id": "client_a_customers_001",
+    "sample_type": "normal",
+    "purpose": "Test standard customer mapping for client A",
+    "input": {
+      "cust_id": "1001",
+      "full_name": "Alice Johnson",
+      "email_addr": "alice.johnson@example.com",
+      "phone": "401-555-1200",
+      "signup_dt": "2024-01-15"
+    },
+    "expected": {
+      "customer_id": "1001",
+      "full_name": "Alice Johnson",
+      "first_name": "Alice",
+      "last_name": "Johnson",
+      "email": "alice.johnson@example.com",
+      "phone": "401-555-1200",
+      "registration_date": "2024-01-15",
+      "city": null,
+      "country": null,
+      "source_system": "client_a"
+    },
+    "notes": "A uses full_name directly and derives first_name/last_name by splitting."
+  },
+  {
+    "sample_id": "client_a_customers_002",
+    "sample_type": "dirty_missing",
+    "purpose": "Test whitespace trimming, blank email normalization, and date conversion for client A",
+    "input": {
+      "cust_id": "1002",
+      "full_name": "  Bob Smith  ",
+      "email_addr": "",
+      "phone": "(401) 555 9988",
+      "signup_dt": "01/20/2024"
+    },
+    "expected": {
+      "customer_id": "1002",
+      "full_name": "Bob Smith",
+      "first_name": "Bob",
+      "last_name": "Smith",
+      "email": null,
+      "phone": "(401) 555 9988",
+      "registration_date": "2024-01-20",
+      "city": null,
+      "country": null,
+      "source_system": "client_a"
+    },
+    "notes": "Phone should remain in source-provided format for client A."
+  },
+  {
+    "sample_id": "client_a_customers_003",
+    "sample_type": "edge_case",
+    "purpose": "Test multi-token full_name and placeholder phone value for client A",
+    "input": {
+      "cust_id": "1003",
+      "full_name": "Mary Ann Smith",
+      "email_addr": "mary.smith@example.com",
+      "phone": "N/A",
+      "signup_dt": "20/01/2024"
+    },
+    "expected": {
+      "customer_id": "1003",
+      "full_name": "Mary Ann Smith",
+      "first_name": "Mary",
+      "last_name": "Ann Smith",
+      "email": "mary.smith@example.com",
+      "phone": null,
+      "registration_date": "2024-01-20",
+      "city": null,
+      "country": null,
+      "source_system": "client_a"
+    },
+    "notes": "Per mapping, last_name is all tokens after the first."
+  }
+]

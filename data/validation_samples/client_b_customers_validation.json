@@ -1,0 +1,80 @@
+[
+  {
+    "sample_id": "client_b_customers_001",
+    "sample_type": "normal",
+    "purpose": "Test standard customer mapping for client B",
+    "input": {
+      "id_pelanggan": "B1001",
+      "nama": "David Lee",
+      "email": "david.lee@example.com",
+      "no_hp": "+1 401 555 2233",
+      "tgl_daftar": "10/03/2024",
+      "kota": "Boston"
+    },
+    "expected": {
+      "customer_id": "B1001",
+      "full_name": "David Lee",
+      "first_name": "David",
+      "last_name": "Lee",
+      "email": "david.lee@example.com",
+      "phone": "+1 401 555 2233",
+      "registration_date": "2024-03-10",
+      "city": "Boston",
+      "country": null,
+      "source_system": "client_b"
+    },
+    "notes": "Client B preserves phone in source-provided format."
+  },
+  {
+    "sample_id": "client_b_customers_002",
+    "sample_type": "dirty_missing",
+    "purpose": "Test name trimming, blank city normalization, and alternate date format for client B",
+    "input": {
+      "id_pelanggan": "B1002",
+      "nama": " Emma   Brown ",
+      "email": "emma.brown@example.com ",
+      "no_hp": "4015552234",
+      "tgl_daftar": "11-03-2024",
+      "kota": ""
+    },
+    "expected": {
+      "customer_id": "B1002",
+      "full_name": "Emma Brown",
+      "first_name": "Emma",
+      "last_name": "Brown",
+      "email": "emma.brown@example.com",
+      "phone": "4015552234",
+      "registration_date": "2024-03-11",
+      "city": null,
+      "country": null,
+      "source_system": "client_b"
+    },
+    "notes": "Expected output assumes whitespace cleanup before comparison."
+  },
+  {
+    "sample_id": "client_b_customers_003",
+    "sample_type": "edge_case",
+    "purpose": "Test multi-token full_name and placeholder phone value for client B",
+    "input": {
+      "id_pelanggan": "B1003",
+      "nama": "Jean Pierre Dupont",
+      "email": "jean.dupont@example.com",
+      "no_hp": "unknown",
+      "tgl_daftar": "11-03-2024",
+      "kota": "Montreal"
+    },
+    "expected": {
+      "customer_id": "B1003",
+      "full_name": "Jean Pierre Dupont",
+      "first_name": "Jean",
+      "last_name": "Pierre Dupont",
+      "email": "jean.dupont@example.com",
+      "phone": null,
+      "registration_date": "2024-03-11",
+      "city": "Montreal",
+      "country": null,
+      "source_system": "client_b"
+    },
+    "notes": "Per mapping, last_name is all tokens after the first."
+  }
+]

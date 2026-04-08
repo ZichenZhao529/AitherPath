@@ -1,0 +1,80 @@
+[
+  {
+    "sample_id": "client_b_orders_001",
+    "sample_type": "normal",
+    "purpose": "Test standard order mapping for client B",
+    "input": {
+      "no_pesanan": "TX9001",
+      "id_pelanggan": "B1001",
+      "tgl_pesan": "12/03/2024",
+      "total_harga": "250.00",
+      "mata_uang": "USD",
+      "status_pesanan": "menunggu",
+      "alamat_kirim": "8 River St, Boston, MA"
+    },
+    "expected": {
+      "order_id": "TX9001",
+      "customer_id": "B1001",
+      "order_date": "2024-03-12",
+      "amount": 250.0,
+      "currency": "USD",
+      "amount_usd": 250.0,
+      "order_status": "pending",
+      "shipping_address": "8 River St, Boston, MA",
+      "source_system": "client_b"
+    },
+    "notes": "status_pesanan 'menunggu' should translate to 'pending'."
+  },
+  {
+    "sample_id": "client_b_orders_002",
+    "sample_type": "dirty_missing",
+    "purpose": "Test amount cleanup, currency normalization, and DD-MM-YYYY parsing for client B",
+    "input": {
+      "no_pesanan": "TX9002",
+      "id_pelanggan": "B1002",
+      "tgl_pesan": "13-03-2024",
+      "total_harga": " 250 ",
+      "mata_uang": "usd",
+      "status_pesanan": "terkirim",
+      "alamat_kirim": " 10 Pine Rd, Cambridge, MA "
+    },
+    "expected": {
+      "order_id": "TX9002",
+      "customer_id": "B1002",
+      "order_date": "2024-03-13",
+      "amount": 250.0,
+      "currency": "USD",
+      "amount_usd": 250.0,
+      "order_status": "delivered",
+      "shipping_address": "10 Pine Rd, Cambridge, MA",
+      "source_system": "client_b"
+    },
+    "notes": "status_pesanan 'terkirim' should translate to 'delivered'."
+  },
+  {
+    "sample_id": "client_b_orders_003",
+    "sample_type": "edge_case",
+    "purpose": "Test empty customer ID, zero amount, EUR currency, and refunded-like unmapped status for client B",
+    "input": {
+      "no_pesanan": "TX9003",
+      "id_pelanggan": "",
+      "tgl_pesan": "13/03/2024",
+      "total_harga": "0",
+      "mata_uang": "EUR",
+      "status_pesanan": "refunded",
+      "alamat_kirim": "22 Rue Saint-Paul, Montreal"
+    },
+    "expected": {
+      "order_id": "TX9003",
+      "customer_id": null,
+      "order_date": "2024-03-13",
+      "amount": 0.0,
+      "currency": "EUR",
+      "amount_usd": null,
+      "order_status": "refunded",
+      "shipping_address": "22 Rue Saint-Paul, Montreal",
+      "source_system": "client_b"
+    },
+    "notes": "Unmapped status should fall back to the original trimmed lowercase value."
+  }
+]

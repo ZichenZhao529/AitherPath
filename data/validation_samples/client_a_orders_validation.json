@@ -1,0 +1,83 @@
+[
+  {
+    "sample_id": "client_a_orders_001",
+    "sample_type": "normal",
+    "purpose": "Test standard order mapping for client A",
+    "input": {
+      "order_no": "A-5001",
+      "cust_id": "1001",
+      "order_date": "2024-02-01",
+      "total_amt": "120.50",
+      "status": "delivered",
+      "shipping_addr": "12 Main St, Providence, RI"
+    },
+    "expected": {
+      "order_id": "A-5001",
+      "customer_id": "1001",
+      "order_date": "2024-02-01",
+      "amount": 120.5,
+      "currency": "USD",
+      "amount_usd": 120.5,
+      "order_status": "delivered",
+      "shipping_address": "12 Main St, Providence, RI",
+      "source_system": "client_a"
+    },
+    "notes": "Client A defaults currency to USD."
+  },
+  {
+    "sample_id": "client_a_orders_002",
+    "sample_type": "dirty_missing",
+    "purpose": "Test amount trimming, blank status handling, and slash-formatted date for client A",
+    "input": {
+      "order_no": "A-5002",
+      "cust_id": "1002",
+      "order_date": "02/05/2024",
+      "total_amt": " 89.99 ",
+      "status": "",
+      "shipping_addr": " 45 Oak Ave, Boston, MA "
+    },
+    "expected": {
+      "order_id": "A-5002",
+      "customer_id": "1002",
+      "order_date": "2024-02-05",
+      "amount": 89.99,
+      "currency": "USD",
+      "amount_usd": 89.99,
+      "order_status": null,
+      "shipping_address": "45 Oak Ave, Boston, MA",
+      "source_system": "client_a"
+    },
+    "notes": "Blank status should normalize to null."
+  },
+  {
+    "sample_id": "client_a_orders_003",
+    "sample_type": "edge_case_invalid",
+    "purpose": "Test that negative order amounts are flagged as invalid for client A",
+    "input": {
+      "order_no": "A-5003",
+      "cust_id": "9999",
+      "order_date": "2024/02/07",
+      "total_amt": "-15.00",
+      "status": "cancelled",
+      "shipping_addr": "PO Box 88, New York, NY"
+    },
+    "expected": {
+      "order_id": "A-5003",
+      "customer_id": "9999",
+      "order_date": "2024-02-07",
+      "amount": -15.0,
+      "currency": "USD",
+      "amount_usd": -15.0,
+      "order_status": "cancelled",
+      "shipping_address": "PO Box 88, New York, NY",
+      "source_system": "client_a"
+    },
+    "validation": {
+      "should_pass": false,
+      "error_field": "amount",
+      "error_type": "invalid_negative_amount",
+      "error_message": "Order amount cannot be negative."
+    },
+    "notes": "Transformation should still parse fields, but validation should fail on negative amount."
+  }
+]

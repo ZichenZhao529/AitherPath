@@ -1,0 +1,62 @@
+[
+  {
+    "table_name": "client_a_customers",
+    "mapping_file": "/Users/zichenzhao/AitherPath/outputs/mappings/generated/client_a_mapping.yaml",
+    "validation_file": "/Users/zichenzhao/AitherPath/data/validation_samples/client_a_customers_validation.json",
+    "total_samples": 3,
+    "passed_samples": 3,
+    "failed_samples": 0,
+    "pass_rate": 100.0,
+    "failed_cases": []
+  },
+  {
+    "table_name": "client_a_orders",
+    "mapping_file": "/Users/zichenzhao/AitherPath/outputs/mappings/generated/client_a_mapping.yaml",
+    "validation_file": "/Users/zichenzhao/AitherPath/data/validation_samples/client_a_orders_validation.json",
+    "total_samples": 3,
+    "passed_samples": 3,
+    "failed_samples": 0,
+    "pass_rate": 100.0,
+    "failed_cases": []
+  },
+  {
+    "table_name": "client_b_customers",
+    "mapping_file": "/Users/zichenzhao/AitherPath/outputs/mappings/generated/client_b_mapping.yaml",
+    "validation_file": "/Users/zichenzhao/AitherPath/data/validation_samples/client_b_customers_validation.json",
+    "total_samples": 3,
+    "passed_samples": 3,
+    "failed_samples": 0,
+    "pass_rate": 100.0,
+    "failed_cases": []
+  },
+  {
+    "table_name": "client_b_orders",
+    "mapping_file": "/Users/zichenzhao/AitherPath/outputs/mappings/generated/client_b_mapping.yaml",
+    "validation_file": "/Users/zichenzhao/AitherPath/data/validation_samples/client_b_orders_validation.json",
+    "total_samples": 3,
+    "passed_samples": 3,
+    "failed_samples": 0,
+    "pass_rate": 100.0,
+    "failed_cases": []
+  },
+  {
+    "table_name": "client_c_customers",
+    "mapping_file": "/Users/zichenzhao/AitherPath/outputs/mappings/generated/client_c_mapping.yaml",
+    "validation_file": "/Users/zichenzhao/AitherPath/data/validation_samples/client_c_customers_validation.json",
+    "total_samples": 3,
+    "passed_samples": 3,
+    "failed_samples": 0,
+    "pass_rate": 100.0,
+    "failed_cases": []
+  },
+  {
+    "table_name": "client_c_orders",
+    "mapping_file": "/Users/zichenzhao/AitherPath/outputs/mappings/generated/client_c_mapping.yaml",
+    "validation_file": "/Users/zichenzhao/AitherPath/data/validation_samples/client_c_orders_validation.json",
+    "total_samples": 3,
+    "passed_samples": 3,
+    "failed_samples": 0,
+    "pass_rate": 100.0,
+    "failed_cases": []
+  }
+]

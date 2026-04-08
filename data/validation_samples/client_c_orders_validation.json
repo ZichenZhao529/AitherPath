@@ -1,0 +1,80 @@
+[
+  {
+    "sample_id": "client_c_orders_001",
+    "sample_type": "normal",
+    "purpose": "Test standard order mapping for client C",
+    "input": {
+      "Bestellnummer": "OC3001",
+      "Kundennummer": "C1001",
+      "Bestelldatum": "03.04.2024",
+      "Gesamtbetrag": "59.95",
+      "Währung": "usd",
+      "Bestellstatus": "Ausstehend",
+      "Lieferadresse": "77 Market St, San Francisco, CA"
+    },
+    "expected": {
+      "order_id": "OC3001",
+      "customer_id": "C1001",
+      "order_date": "2024-04-03",
+      "amount": 59.95,
+      "currency": "USD",
+      "amount_usd": 59.95,
+      "order_status": "pending",
+      "shipping_address": "77 Market St, San Francisco, CA",
+      "source_system": "client_c"
+    },
+    "notes": "Bestellstatus 'Ausstehend' should translate to 'pending'."
+  },
+  {
+    "sample_id": "client_c_orders_002",
+    "sample_type": "dirty_missing",
+    "purpose": "Test currency cleanup, null status fallback, and trimmed address for client C",
+    "input": {
+      "Bestellnummer": "OC3002",
+      "Kundennummer": "C1002",
+      "Bestelldatum": "04.04.2024",
+      "Gesamtbetrag": "59.95 ",
+      "Währung": " usd ",
+      "Bestellstatus": null,
+      "Lieferadresse": " 15 Howard St, New York, NY "
+    },
+    "expected": {
+      "order_id": "OC3002",
+      "customer_id": "C1002",
+      "order_date": "2024-04-04",
+      "amount": 59.95,
+      "currency": "USD",
+      "amount_usd": 59.95,
+      "order_status": null,
+      "shipping_address": "15 Howard St, New York, NY",
+      "source_system": "client_c"
+    },
+    "notes": "Null status should remain null."
+  },
+  {
+    "sample_id": "client_c_orders_003",
+    "sample_type": "edge_case",
+    "purpose": "Test large amount, unmatched customer reference, and cancelled status for client C",
+    "input": {
+      "Bestellnummer": "OC3003",
+      "Kundennummer": "C9999",
+      "Bestelldatum": "05.04.2024",
+      "Gesamtbetrag": "999999.99",
+      "Währung": "USD",
+      "Bestellstatus": "Storniert",
+      "Lieferadresse": "1 Infinite Loop, Cupertino, CA"
+    },
+    "expected": {
+      "order_id": "OC3003",
+      "customer_id": "C9999",
+      "order_date": "2024-04-05",
+      "amount": 999999.99,
+      "currency": "USD",
+      "amount_usd": 999999.99,
+      "order_status": "cancelled",
+      "shipping_address": "1 Infinite Loop, Cupertino, CA",
+      "source_system": "client_c"
+    },
+    "notes": "Bestellstatus 'Storniert' should translate to 'cancelled'."
+  }
+]

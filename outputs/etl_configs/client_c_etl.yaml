@@ -1,0 +1,144 @@
+client_id: client_c
+source:
+  system: client_c
+  tables:
+  - customers
+  - orders
+  format: csv
+schedule:
+  frequency: daily
+  trigger: batch
+transformations:
+  customers:
+  - target_table: unified_customers
+    target_field: customer_id
+    source_field: Kundennummer
+    transform_type: renaming
+    transformation_rule: customer_id = Kundennummer
+  - target_table: unified_customers
+    target_field: full_name
+    source_field: Vorname, Nachname
+    transform_type: concatenation
+    transformation_rule: full_name = trim(concat(Vorname, ' ', Nachname))
+  - target_table: unified_customers
+    target_field: first_name
+    source_field: Vorname
+    transform_type: renaming
+    transformation_rule: first_name = Vorname
+  - target_table: unified_customers
+    target_field: last_name
+    source_field: Nachname
+    transform_type: renaming
+    transformation_rule: last_name = Nachname
+  - target_table: unified_customers
+    target_field: email
+    source_field: E-Mail
+    transform_type: renaming
+    transformation_rule: email = E-Mail
+  - target_table: unified_customers
+    target_field: phone
+    source_field: Telefon
+    transform_type: format_cleanup
+    transformation_rule: 'phone = if Telefon is null then null else normalize_phone(Telefon)
+      by removing spaces, hyphens, and non-numeric separators while preserving a leading
+      ''+''; examples: ''+49-30-12345'' -> ''+493012345'', ''+33-1-23456'' -> ''+33123456'''
+  - target_table: unified_customers
+    target_field: registration_date
+    source_field: Registrierungsdatum
+    transform_type: date_format_conversion
+    transformation_rule: registration_date = parse_date(Registrierungsdatum, source_format='yyyy.MM.dd',
+      target_format='yyyy-MM-dd'); if parsing fails, set to null
+  - target_table: unified_customers
+    target_field: city
+    source_field: null
+    transform_type: default_value
+    transformation_rule: city = null
+  - target_table: unified_customers
+    target_field: country
+    source_field: Land
+    transform_type: format_cleanup
+    transformation_rule: country = upper(trim(Land))
+  - target_table: unified_customers
+    target_field: source_system
+    source_field: null
+    transform_type: default_value
+    transformation_rule: source_system = 'client_c'
+  orders:
+  - target_table: unified_orders
+    target_field: order_id
+    source_field: Bestellnummer
+    transform_type: renaming
+    transformation_rule: order_id = Bestellnummer
+  - target_table: unified_orders
+    target_field: customer_id
+    source_field: Kundennummer
+    transform_type: renaming
+    transformation_rule: customer_id = Kundennummer
+  - target_table: unified_orders
+    target_field: order_date
+    source_field: Bestelldatum
+    transform_type: date_format_conversion
+    transformation_rule: order_date = parse_date(Bestelldatum, source_format='dd.MM.yyyy',
+      target_format='yyyy-MM-dd'); if parsing fails or date is invalid (for example
+      month 13), set to null
+  - target_table: unified_orders
+    target_field: amount
+    source_field: Gesamtbetrag
+    transform_type: renaming
+    transformation_rule: amount = round(Gesamtbetrag, 2)
+  - target_table: unified_orders
+    target_field: currency
+    source_field: Währung
+    transform_type: format_cleanup
+    transformation_rule: currency = upper(trim(Währung))
+  - target_table: unified_orders
+    target_field: amount_usd
+    source_field: Gesamtbetrag, Währung
+    transform_type: calculated_field
+    transformation_rule: 'amount_usd = if Gesamtbetrag is null or Währung is null
+      then null else round(Gesamtbetrag * exchange_rate_to_usd(upper(trim(Währung)),
+      order_date), 2); pseudocode: curr = upper(trim(Währung)); rate = exchange_rate_to_usd(curr,
+      order_date); if rate is null then null else round(Gesamtbetrag * rate, 2)'
+  - target_table: unified_orders
+    target_field: order_status
+    source_field: Bestellstatus
+    transform_type: value_translation
+    transformation_rule: 'order_status = translate(Bestellstatus): ''Geliefert'' ->
+      ''delivered'', ''Ausstehend'' -> ''pending'', ''Storniert'' -> ''cancelled'';
+      otherwise retain null for unmapped or missing values'
+  - target_table: unified_orders
+    target_field: shipping_address
+    source_field: Lieferadresse
+    transform_type: renaming
+    transformation_rule: shipping_address = Lieferadresse
+  - target_table: unified_orders
+    target_field: source_system
+    source_field: null
+    transform_type: default_value
+    transformation_rule: source_system = 'client_c'
+destination:
+  schema: unified_schema
+  tables:
+  - unified_customers
+  - unified_orders
+quality_checks:
+- check_type: required_fields
+  rules:
+    unified_customers:
+    - customer_id
+    - full_name
+    unified_orders:
+    - order_id
+    - customer_id
+    - amount
+- check_type: date_format
+  fields:
+  - registration_date
+  - order_date
+  expected_format: YYYY-MM-DD
+- check_type: non_negative_amount
+  table: unified_orders
+  field: amount
+- check_type: currency_code_normalization
+  table: unified_orders
+  field: currency

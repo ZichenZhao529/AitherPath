@@ -1,0 +1,83 @@
+[
+  {
+    "sample_id": "client_c_customers_001",
+    "sample_type": "normal",
+    "purpose": "Test standard customer mapping for client C",
+    "input": {
+      "Kundennummer": "C1001",
+      "Vorname": "Sophia",
+      "Nachname": "Taylor",
+      "E-Mail": "sophia.taylor@example.com",
+      "Telefon": "+1 401 555 7788",
+      "Registrierungsdatum": "2024.04.01",
+      "Land": "us"
+    },
+    "expected": {
+      "customer_id": "C1001",
+      "full_name": "Sophia Taylor",
+      "first_name": "Sophia",
+      "last_name": "Taylor",
+      "email": "sophia.taylor@example.com",
+      "phone": "+14015557788",
+      "registration_date": "2024-04-01",
+      "city": null,
+      "country": "US",
+      "source_system": "client_c"
+    },
+    "notes": "Client C normalizes phone and uppercases country."
+  },
+  {
+    "sample_id": "client_c_customers_002",
+    "sample_type": "dirty_missing",
+    "purpose": "Test trimming, blank last_name, null email, and country cleanup for client C",
+    "input": {
+      "Kundennummer": "C1002",
+      "Vorname": " Liam ",
+      "Nachname": "",
+      "E-Mail": null,
+      "Telefon": "(401)-555-8899",
+      "Registrierungsdatum": "2024.04.02",
+      "Land": ""
+    },
+    "expected": {
+      "customer_id": "C1002",
+      "full_name": "Liam",
+      "first_name": "Liam",
+      "last_name": null,
+      "email": null,
+      "phone": "4015558899",
+      "registration_date": "2024-04-02",
+      "city": null,
+      "country": null,
+      "source_system": "client_c"
+    },
+    "notes": "Concatenation should return the non-null component when one name part is missing."
+  },
+  {
+    "sample_id": "client_c_customers_003",
+    "sample_type": "edge_case",
+    "purpose": "Test compound names and placeholder phone value for client C",
+    "input": {
+      "Kundennummer": "C1003",
+      "Vorname": "Ana Maria",
+      "Nachname": "Lopez Garcia",
+      "E-Mail": "ana.lopez@example.com",
+      "Telefon": "N/A",
+      "Registrierungsdatum": "2024.04.02",
+      "Land": "es"
+    },
+    "expected": {
+      "customer_id": "C1003",
+      "full_name": "Ana Maria Lopez Garcia",
+      "first_name": "Ana Maria",
+      "last_name": "Lopez Garcia",
+      "email": "ana.lopez@example.com",
+      "phone": null,
+      "registration_date": "2024-04-02",
+      "city": null,
+      "country": "ES",
+      "source_system": "client_c"
+    },
+    "notes": "Phone placeholder should normalize to null."
+  }
+]

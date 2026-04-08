@@ -1,0 +1,144 @@
+client_id: client_a
+source:
+  system: client_a
+  tables:
+  - customers
+  - orders
+  format: csv
+schedule:
+  frequency: daily
+  trigger: batch
+transformations:
+  customers:
+  - target_table: unified_customers
+    target_field: customer_id
+    source_field: cust_id
+    transform_type: renaming
+    transformation_rule: customer_id = cust_id
+  - target_table: unified_customers
+    target_field: full_name
+    source_field: full_name
+    transform_type: direct_mapping
+    transformation_rule: full_name = full_name
+  - target_table: unified_customers
+    target_field: first_name
+    source_field: full_name
+    transform_type: splitting
+    transformation_rule: Split full_name on spaces; first_name = first token. If full_name
+      is null or empty, set first_name = null.
+  - target_table: unified_customers
+    target_field: last_name
+    source_field: full_name
+    transform_type: splitting
+    transformation_rule: Split full_name on spaces; last_name = join all tokens after
+      the first with a single space. If only one token exists, set last_name = null.
+  - target_table: unified_customers
+    target_field: email
+    source_field: email_addr
+    transform_type: renaming
+    transformation_rule: email = email_addr
+  - target_table: unified_customers
+    target_field: phone
+    source_field: phone
+    transform_type: direct_mapping
+    transformation_rule: phone = phone
+  - target_table: unified_customers
+    target_field: registration_date
+    source_field: signup_dt
+    transform_type: date_format_conversion
+    transformation_rule: Parse signup_dt as source format YYYY-MM-DD and output as
+      target date format YYYY-MM-DD. If parsing fails, set registration_date = null.
+  - target_table: unified_customers
+    target_field: city
+    source_field: null
+    transform_type: default_value
+    transformation_rule: city = null
+  - target_table: unified_customers
+    target_field: country
+    source_field: null
+    transform_type: default_value
+    transformation_rule: country = null
+  - target_table: unified_customers
+    target_field: source_system
+    source_field: null
+    transform_type: default_value
+    transformation_rule: source_system = 'client_a'
+  orders:
+  - target_table: unified_orders
+    target_field: order_id
+    source_field: order_no
+    transform_type: renaming
+    transformation_rule: order_id = order_no
+  - target_table: unified_orders
+    target_field: customer_id
+    source_field: cust_id
+    transform_type: renaming
+    transformation_rule: customer_id = cust_id
+  - target_table: unified_orders
+    target_field: order_date
+    source_field: order_date
+    transform_type: date_format_conversion
+    transformation_rule: Attempt to parse order_date using source formats YYYY-MM-DD
+      and YYYY/MM/DD; output as target date format YYYY-MM-DD. Validate calendar dates;
+      if parsing or validation fails, set order_date = null.
+  - target_table: unified_orders
+    target_field: amount
+    source_field: total_amt
+    transform_type: renaming
+    transformation_rule: amount = round(total_amt, 2)
+  - target_table: unified_orders
+    target_field: currency
+    source_field: null
+    transform_type: default_value
+    transformation_rule: currency = 'USD'
+  - target_table: unified_orders
+    target_field: amount_usd
+    source_field: total_amt
+    transform_type: calculated_field
+    transformation_rule: If currency == 'USD' then amount_usd = round(total_amt, 2);
+      otherwise amount_usd = round(total_amt * fx_rate_to_usd, 2). For client_a, currency
+      defaults to 'USD', so amount_usd = round(total_amt, 2).
+  - target_table: unified_orders
+    target_field: order_status
+    source_field: status
+    transform_type: value_translation
+    transformation_rule: 'Translate source status to standardized vocabulary: delivered
+      -> delivered, pending -> pending, cancelled -> cancelled. If an unexpected value
+      appears, retain the original trimmed lowercase value.'
+  - target_table: unified_orders
+    target_field: shipping_address
+    source_field: shipping_addr
+    transform_type: renaming
+    transformation_rule: shipping_address = shipping_addr
+  - target_table: unified_orders
+    target_field: source_system
+    source_field: null
+    transform_type: default_value
+    transformation_rule: source_system = 'client_a'
+destination:
+  schema: unified_schema
+  tables:
+  - unified_customers
+  - unified_orders
+quality_checks:
+- check_type: required_fields
+  rules:
+    unified_customers:
+    - customer_id
+    - full_name
+    unified_orders:
+    - order_id
+    - customer_id
+    - amount
+- check_type: date_format
+  fields:
+  - registration_date
+  - order_date
+  expected_format: YYYY-MM-DD
+- check_type: non_negative_amount
+  table: unified_orders
+  field: amount
+- check_type: default_currency_present
+  table: unified_orders
+  field: currency
+  expected_value: USD
