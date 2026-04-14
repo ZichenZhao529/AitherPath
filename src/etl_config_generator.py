@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 import yaml
 
+    
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 OUTPUTS_DIR = BASE_DIR / "outputs"
@@ -152,3 +153,10 @@ def group_transformations_by_source_table(rules: List[Dict[str, Any]]) -> Dict[s
         })
 
     return grouped
+
+class ETLConfigGenerator:
+    def generate(self, mapping_doc: dict, output_file: Path | None = None) -> dict:
+        etl_config = build_etl_config(mapping_doc)
+        if output_file is not None:
+            save_yaml(etl_config, output_file)
+        return etl_config

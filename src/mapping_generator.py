@@ -1,6 +1,8 @@
 # src/mapping_generator.py
 
+
 import json
+import yaml
 from pathlib import Path
 from openai import OpenAI
 
@@ -51,3 +53,18 @@ class MappingGenerator:
         )
 
         return response.output_text
+
+    def generate(self, client_id: str, field_analysis: dict, schema: dict) -> dict:
+        user_prompt = build_mapping_generator_user_prompt(
+            client_id=client_id,
+            field_analysis=field_analysis,
+            unified_schema=schema,
+        )
+
+        response = self.client.responses.create(
+            model=self.model,
+            instructions=MAPPING_GENERATOR_SYSTEM_PROMPT,
+            input=user_prompt,
+        )
+
+        return yaml.safe_load(response.output_text)

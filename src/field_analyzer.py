@@ -14,8 +14,8 @@ class FieldAnalyzer:
         self.model = model
 
     def load_csv(self, csv_path: str | Path) -> pd.DataFrame:
-        return pd.read_csv(csv_path)
-
+        return pd.read_csv(csv_path, encoding="utf-8")
+    
     def analyze_table(self, csv_path: str | Path, dataset_name: str, table_name: str) -> dict:
         df = self.load_csv(csv_path)
         profiles = build_column_profiles(df)
@@ -36,3 +36,15 @@ class FieldAnalyzer:
         result = json.loads(text)
         result["raw_profiles"] = profiles
         return result
+    
+    def analyze(self, customer_csv: str | Path, order_csv: str | Path, client_id: str) -> dict:
+        customer_result = self.analyze_table(customer_csv, client_id, "customers")
+        order_result = self.analyze_table(order_csv, client_id, "orders")
+
+        return {
+            "client_id": client_id,
+            "tables": [
+                customer_result,
+                order_result,
+            ]
+        }

@@ -27,7 +27,6 @@ class SchemaRecommender:
 
     def recommend_schema(self, field_analysis_paths: list[str | Path]) -> dict:
         field_analysis_results = self.load_multiple_field_analyses(field_analysis_paths)
-
         user_prompt = build_schema_recommender_user_prompt(field_analysis_results)
 
         response = self.client.responses.create(
@@ -36,6 +35,15 @@ class SchemaRecommender:
             input=user_prompt,
         )
 
-        text = response.output_text
-        schema = json.loads(text)
-        return schema
+        return json.loads(response.output_text)
+
+    def recommend(self, field_analysis_results: list[dict]) -> dict:
+        user_prompt = build_schema_recommender_user_prompt(field_analysis_results)
+
+        response = self.client.responses.create(
+            model=self.model,
+            instructions=SCHEMA_RECOMMENDER_SYSTEM_PROMPT,
+            input=user_prompt,
+        )
+
+        return json.loads(response.output_text)

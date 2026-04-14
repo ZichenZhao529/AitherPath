@@ -5,8 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 import yaml
-
-
+    
 BASE_DIR = Path(__file__).resolve().parent.parent
 OUTPUTS_DIR = BASE_DIR / "outputs"
 SCHEMA_PATH = OUTPUTS_DIR / "schema" / "unified_schema.json"
@@ -137,3 +136,14 @@ def generate_data_dictionary() -> Path:
     output_path = OUTPUTS_DIR / "data_dictionary.md"
     save_markdown(content, output_path)
     return output_path
+
+
+class DataDictionaryGenerator:
+    def generate(self, schema_doc: dict, mapping_docs: list[dict], output_path: Path | None = None) -> str:
+        mapping_index = collect_mapping_index(mapping_docs)
+        content = build_data_dictionary(schema_doc, mapping_index)
+
+        if output_path is not None:
+            save_markdown(content, output_path)
+
+        return content
