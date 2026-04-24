@@ -4,12 +4,13 @@ import json
 
 
 MAPPING_GENERATOR_SYSTEM_PROMPT = """
-You are a mapping generation assistant for a data onboarding system.
+You are a mapping generation assistant for a generalized data onboarding system.
 
-Your task is to generate mapping rules that transform one client's source fields
-into a unified target schema.
+Your task is to generate mapping rules that transform one source dataset into a unified target schema.
 
 You must return valid YAML only.
+Do not include markdown fences.
+Do not include explanations outside the YAML.
 
 Each mapping rule must include:
 - target_table
@@ -19,9 +20,6 @@ Each mapping rule must include:
 - transform_type
 - transformation_rule
 - example
-
-Optional:
-- notes
 
 Allowed transform_type values:
 - direct_mapping
@@ -37,13 +35,13 @@ Allowed transform_type values:
 
 Requirements:
 1. Cover every target field in the unified schema.
-2. Use default_value when the source client does not contain a target field.
+2. Use default_value when the source dataset does not contain a target field.
 3. For date fields, specify the source format and target format clearly.
 4. For status fields, provide explicit value translations if source values are language-specific.
 5. For calculated fields such as amount_usd, provide clear pseudocode and one example.
 6. For name splitting or concatenation, mention assumptions or edge cases when needed.
+7. Do not hard-code assumptions about specific sample clients.
 """
-
 
 def build_mapping_generator_user_prompt(
     client_id: str,
@@ -54,15 +52,15 @@ def build_mapping_generator_user_prompt(
     unified_schema_json = json.dumps(unified_schema, ensure_ascii=False, indent=2)
 
     return f"""
-Generate a YAML mapping file for client: {client_id}
+Generate a YAML mapping file for source system: {client_id}
 
-Below is the field analysis result for this client:
+Below is the field analysis result for this uploaded dataset:
 {field_analysis_json}
 
 Below is the unified target schema:
 {unified_schema_json}
 
-Return YAML in this structure:
+Return YAML in this exact structure:
 
 client_id: {client_id}
 
@@ -78,34 +76,39 @@ mappings:
   - target_table: unified_customers
     target_field: customer_id
     source_table: customers
-    source_field: cust_id
+    source_field: example_source_column
     transform_type: renaming
-    transformation_rule: "customer_id = cust_id"
+    transformation_rule: "customer_id = example_source_column"
     example:
       input: "C001"
       output: "C001"
-     
-For client_a:
-- If only `full_name` is available, split it into `first_name` and `last_name` using a simple space-based rule.
-- Assume the default currency is `USD` when no explicit currency field is provided.
-- Therefore, map `amount_usd` directly from `total_amt`.
 
-For client_b:
-- If only `nama` is available, split it into `first_name` and `last_name` using a simple space-based rule.
-- Translate `status_pesanan` into the standardized target vocabulary:
-  - `terkirim` -> `delivered`
-  - `menunggu` -> `pending`
-  - `dibatalkan` -> `cancelled`
-- Do not leave `first_name` or `last_name` as null when a simple split from `nama` is possible.
-
-For client_c:
-- Normalize `Telefon` into the project’s standard phone format instead of keeping the raw source formatting.
-- Normalize `Land` and `Währung` using trimming and uppercase formatting when appropriate.
-- Translate German order statuses into the standardized target vocabulary:
-  - `Geliefert` -> `delivered`
-  - `Ausstehend` -> `pending`
-  - `Storniert` -> `cancelled`
-- Use `cancelled` rather than `canceled` to stay consistent with the project vocabulary.
-- Use `delivered` rather than `shipped` for the standardized completed-order status.
-Make sure every target field in unified_customers and unified_orders is covered.
+General mapping requirements:
+1. Cover every target field in the unified schema.
+2. Each mapping rule must include target_table, target_field, source_table, source_field, transform_type, transformation_rule, and example.
+3. Use direct_mapping or renaming when source and target fields have the same meaning.
+4. Use splitting when a full_name field should be split into first_name and last_name.
+5. Use concatenation when first_name and last_name should be combined into full_name.
+6. Use date_format_conversion for date fields and clearly specify the source format and target format YYYY-MM-DD.
+7. Use value_translation for order status values that need standardization.
+8. Standardize order_status values to one of: delivered, pending, cancelled, unknown.
+9. For Japanese order statuses, use:
+   - 配送済み -> delivered
+   - 保留中 -> pending
+   - キャンセル -> cancelled
+10. For Indonesian order statuses, use:
+   - terkirim -> delivered
+   - menunggu -> pending
+   - dibatalkan -> cancelled
+11. For German order statuses, use:
+   - Geliefert -> delivered
+   - Ausstehend -> pending
+   - Storniert -> cancelled
+12. Use format_cleanup for phone, country, currency, or text normalization.
+13. Use default_value when the uploaded dataset does not contain a target field.
+14. Use calculated_field for amount_usd only when the required amount and currency logic is available.
+15. Do not assume the source system is client_a, client_b, or client_c.
+16. Infer mapping logic from field analysis, sample values, and unified schema.
+17. Return valid YAML only.
+18. Do not include markdown fences.
 """

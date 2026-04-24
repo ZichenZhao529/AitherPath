@@ -77,20 +77,38 @@ def build_quality_checks(client_id: str) -> List[Dict[str, Any]]:
         },
     ]
 
-    if client_id == "client_a":
-        checks.append({
-            "check_type": "default_currency_present",
+def build_quality_checks(client_id: str) -> List[Dict[str, Any]]:
+    checks = [
+        {
+            "check_type": "required_fields",
+            "rules": {
+                "unified_customers": ["customer_id"],
+                "unified_orders": ["order_id", "customer_id", "amount"],
+            },
+        },
+        {
+            "check_type": "date_format",
+            "fields": ["registration_date", "order_date"],
+            "expected_format": "YYYY-MM-DD",
+        },
+        {
+            "check_type": "non_negative_amount",
+            "table": "unified_orders",
+            "field": "amount",
+        },
+        {
+            "check_type": "standardized_currency_format",
             "table": "unified_orders",
             "field": "currency",
-            "expected_value": "USD",
-        })
-
-    if client_id in {"client_b", "client_c"}:
-        checks.append({
-            "check_type": "currency_code_normalization",
+            "expected_format": "ISO currency code, e.g. USD, EUR, IDR",
+        },
+        {
+            "check_type": "standardized_order_status",
             "table": "unified_orders",
-            "field": "currency",
-        })
+            "field": "order_status",
+            "expected_values": ["delivered", "pending", "cancelled"],
+        },
+    ]
 
     return checks
 

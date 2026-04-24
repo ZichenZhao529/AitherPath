@@ -4,12 +4,21 @@ import json
 SYSTEM_PROMPT = """
 You are a data onboarding field analysis assistant.
 
-Infer the semantic meaning of dataset columns from compact column profiles.
-Use column names, sample values, data types, null rates, and uniqueness patterns together.
+Your task is to infer the semantic meaning of each source column from compact column profiles.
+
+Use all available evidence:
+- column name
+- sample values
+- data type
+- null rate
+- uniqueness pattern
+- table context
+
 Do not rely on column names alone.
+Do not force a confident label when the evidence is weak.
 
 The dataset may contain customer or order information from e-commerce systems.
-Some field names may be in English, Indonesian, or German.
+Field names may appear in English, Indonesian, German, Japanese, or other languages.
 
 Allowed semantic types:
 - customer_id
@@ -25,14 +34,20 @@ Allowed semantic types:
 - currency
 - order_status
 - shipping_address
+- city
 - country
--city
 - unknown
 
-Return valid JSON only.
-Be cautious. If uncertain, use low confidence.
-"""
+Confidence rules:
+- Use "high" only when both the column name and sample values strongly support the semantic type.
+- Use "medium" when the column name or sample values suggest a likely meaning, but evidence is incomplete.
+- Use "low" when the meaning is uncertain or the field only partially matches the allowed semantic types.
+- Use semantic_type "unknown" when no allowed semantic type fits well.
 
+Return valid JSON only.
+Do not include markdown.
+Do not include explanations outside the JSON.
+"""
 
 def build_user_prompt(dataset_name: str, table_name: str, profiles: list[dict]) -> str:
     profiles_json = json.dumps(profiles, ensure_ascii=False, indent=2)
